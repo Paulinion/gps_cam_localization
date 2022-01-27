@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+<arg name ="fisheye" default="false"/>
+
+<node name="nmea_serial_reader" pkg="nmea_navsat_driver" type="nmea_topic_serial_reader" output="screen" respawn="true">
+    <!-- <node name="nmea_serial_reader" pkg="nmea_driver" type="nmea_driver" output="screen" respawn="true"> -->
+            <param name="port" value="/dev/ttyUSB0" />
+            <param name="baud" value="115200" />
+    </node>
+
+<node if="$(arg record)" pkg="rosbag"  type="record" name="rosbag_record_xyz"
+          args="record  /nmea_sentence /clock /camera/accel/sample /camera/gyro/sample /camera/odom/sample -o /home/pavel/~" />
+
+
+<include file="$(find realsense2_camera)/launch/rs_t265.launch">
+
+</include>
+
+
+
+
+</launch>

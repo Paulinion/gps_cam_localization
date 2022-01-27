@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<launch>
+
+  <node pkg="mapviz" type="mapviz" name="mapviz">
+    <param name="config" value="$(find land)/mapviz.mvc" />
+  </node>
+  <arg name="place" default="skb" />
+
+
+  <node pkg="swri_transform_util" type="initialize_origin.py" name="initialize_origin" >
+    <param name="local_xy_frame" value="/map"/>
+    <param name="local_xy_origin" value="$(arg place)"/>
+    <rosparam param="local_xy_origins">
+      [
+       { name: skb,
+         latitude: 59.8491944,
+         longitude: 30.219345,
+         altitude: 9.0,
+         heading: 0.0},
+
+       { name: nonius,
+         latitude: 59.984000,
+         longitude: 30.317000,
+         altitude: 9.0,
+         heading: 0.0},
+
+       { name: exp,
+         latitude: 59.8492083933,
+         longitude: 30.21936781,
+         altitude: 9.0,
+         heading: 0.0 }
+
+         ]
+      
+    </rosparam>
+  </node>
+<node pkg="land" type="gps_tf_broadcaster.py" name="gps_transform" output="screen" />
+<node pkg="land" type="no_gps_orientation.py" name="camera_odom" output="screen" />
+<node pkg="land" type="orientation_fix.py" name="orientation_fix" output="screen" />
+<node pkg="land" type="settings.py" name="settings" output="screen" />
+
+
+<!--<node pkg="land" type="fix_gps.py" name="fix_gps" output="screen" />-->
+  <node name="nmea_parser" pkg="nmea_navsat_driver" type="nmea_topic_driver" output="screen" />
+
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_gps" args="0 0 0 0 0 0  /map /gps_info  " />
+
+ <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_camera" args="0 0 0 0 0 0  /gps_info /base_link " />
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_camera" args="0 0 0 0 0 0  /map /camera " />
+
+
+
+
+ <!--<node pkg="tf2_ros" type="static_transform_publisher" name="camera_pose_transf" args="0 0 0 0 0 0   /camera_odom_frame  /camera_pose_frame " />
+ <node pkg="tf2_ros" type="static_transform_publisher" name="camera_imu" args="0 0 0 0 0 0   /camera_pose_frame /imu_frame  " />
+ <node pkg="tf2_ros" type="static_transform_publisher" name="gps_fix" args="0 0 0 0 0 0   /map /gps_fix  " />-->
+
+
+
+</launch>
